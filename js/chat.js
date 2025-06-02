@@ -1,5 +1,9 @@
 // Chat functionality
-const myDescription = "A passionate web developer with an eye for clean UI, interaction design, and automation.";
+const myDescription = `Hi, I'm Mausham Prasad — an engineering student deeply immersed in the worlds of IoT, cybersecurity, blockchain, and everything CSE. I thrive at the intersection of code and creativity, building things that are not just functional but meaningful.
+
+Currently exploring full-stack development, I love crafting responsive UIs, connecting smart devices, and experimenting with AI integrations. Whether it's tinkering with sensors, automating workflows, or diving into open-source, I'm always learning, building, and iterating.
+
+In short: I code. I break stuff. I fix it better.`;
 
 export function initChat() {
   const chatBubble = document.getElementById('chat-bubble');
@@ -16,7 +20,7 @@ export function initChat() {
     
     // Add initial message if chat is empty
     if (chatMessages.children.length === 0) {
-      addBotMessage("Hi, I'm John Doe. What do you want to know about me?");
+      addBotMessage("Hi, I'm Mausham Prasad. What would you like to know about me?");
     }
   });
   
@@ -45,7 +49,7 @@ export function initChat() {
 }
 
 // Handle sending messages
-function handleSendMessage() {
+async function handleSendMessage() {
   const userMessageInput = document.getElementById('user-message');
   const message = userMessageInput.value.trim();
   
@@ -59,11 +63,37 @@ function handleSendMessage() {
     // Show typing indicator
     showTypingIndicator();
     
-    // Generate bot response after a delay
-    setTimeout(() => {
+    try {
+      // Call Gemini API
+      const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAoKVPZpU7GLIJQKg1mE22f2r9ju6eqYsA", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `User_message: ${message}. Reply naturally to the user message, and if required, answer based on: ${myDescription}, or simply respond in a friendly way as if Mausham Prasad is talking. Keep responses short and conversational.`
+            }]
+          }]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+
+      const data = await response.json();
+      const botResponse = data.candidates[0].content.parts[0].text;
+
+      // Remove typing indicator and add bot response
       removeTypingIndicator();
-      generateBotResponse(message);
-    }, 1500);
+      addBotMessage(botResponse);
+    } catch (error) {
+      console.error('Error:', error);
+      removeTypingIndicator();
+      addBotMessage("I'm having trouble connecting right now. Please try again later.");
+    }
   }
 }
 
@@ -120,57 +150,4 @@ function removeTypingIndicator() {
 function scrollToBottom() {
   const chatMessages = document.querySelector('.chat-messages');
   chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Generate a response based on the user's message
-function generateBotResponse(userMessage) {
-  // This is a dummy implementation that will be replaced with the API call later
-  const lowerMessage = userMessage.toLowerCase();
-  let response;
-  
-  // Simple keyword matching for demonstration
-  if (lowerMessage.includes('experience') || lowerMessage.includes('background')) {
-    response = "I have over 5 years of experience in web development, focusing on creating responsive and user-friendly interfaces.";
-  } else if (lowerMessage.includes('skills') || lowerMessage.includes('technologies')) {
-    response = "My core skills include HTML, CSS, JavaScript, React, Node.js, and UI/UX design. I'm also experienced with responsive design and API integration.";
-  } else if (lowerMessage.includes('project') || lowerMessage.includes('work')) {
-    response = "I've worked on various projects including e-commerce platforms, task management apps, and custom web applications. You can see some examples in my portfolio section!";
-  } else if (lowerMessage.includes('contact') || lowerMessage.includes('hire') || lowerMessage.includes('email')) {
-    response = "You can contact me at john.doe@example.com or through the contact form on this page. I'm currently available for freelance work and new opportunities.";
-  } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
-    response = "Hello! Nice to meet you. How can I help you today?";
-  } else {
-    response = "Thanks for your message! I'm a passionate web developer with an eye for clean UI, interaction design, and automation. Is there something specific you'd like to know about my work or experience?";
-  }
-  
-  // Add the response to the chat
-  addBotMessage(response);
-  
-  // In the future, this would be replaced with an API call:
-  /*
-  const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=GEMINI_API_KEY";
-  
-  fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      contents: [{
-        parts: [{
-          text: `User_message: ${userMessage}. Reply naturally to the user message, and if required, answer based on: ${myDescription}, or simply respond in a friendly way as if John Doe is talking. Keep responses short and conversational.`
-        }]
-      }]
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    const botResponse = data.candidates[0].content.parts[0].text;
-    addBotMessage(botResponse);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    addBotMessage("I'm having trouble connecting right now. Please try again later.");
-  });
-  */
 }
