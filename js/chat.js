@@ -1,9 +1,7 @@
 // Chat functionality
-const myDescription = `Hi, I'm Mausham Prasad — an engineering student deeply immersed in the worlds of IoT, cybersecurity, blockchain, and everything CSE. I thrive at the intersection of code and creativity, building things that are not just functional but meaningful.
+import { sendChatMessage } from './api.js';
 
-Currently exploring full-stack development, I love crafting responsive UIs, connecting smart devices, and experimenting with AI integrations. Whether it's tinkering with sensors, automating workflows, or diving into open-source, I'm always learning, building, and iterating.
-
-In short: I code. I break stuff. I fix it better.`;
+const myDescription = "A passionate web developer with an eye for clean UI, interaction design, and automation.";
 
 export function initChat() {
   const chatBubble = document.getElementById('chat-bubble');
@@ -20,7 +18,7 @@ export function initChat() {
     
     // Add initial message if chat is empty
     if (chatMessages.children.length === 0) {
-      addBotMessage("Hi, I'm Mausham Prasad. What would you like to know about me?");
+      addBotMessage("Hi, I'm Mausham Prasad. What do you want to know about me?");
     }
   });
   
@@ -64,33 +62,14 @@ async function handleSendMessage() {
     showTypingIndicator();
     
     try {
-      // Call Gemini API
-      const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAoKVPZpU7GLIJQKg1mE22f2r9ju6eqYsA", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `User_message: ${message}. Reply naturally to the user message, and if required, answer based on: ${myDescription}, or simply respond in a friendly way as if Mausham Prasad is talking. Keep responses short and conversational.`
-            }]
-          }]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('API request failed');
-      }
-
-      const data = await response.json();
-      const botResponse = data.candidates[0].content.parts[0].text;
-
+      // Get response from API
+      const response = await sendChatMessage(message);
+      
       // Remove typing indicator and add bot response
       removeTypingIndicator();
-      addBotMessage(botResponse);
+      addBotMessage(response);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Chat Error:', error);
       removeTypingIndicator();
       addBotMessage("I'm having trouble connecting right now. Please try again later.");
     }

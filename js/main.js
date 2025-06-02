@@ -1,6 +1,7 @@
 // Import modules
 import { initChat } from './chat.js';
 import { initDarkMode } from './darkMode.js';
+import { initAnimations } from './animations.js';
 
 // Initialize when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Initialize dark mode
   initDarkMode();
+  
+  // Initialize 3D animations and effects
+  initAnimations();
   
   // Smooth scrolling for navigation links
   setupSmoothScrolling();

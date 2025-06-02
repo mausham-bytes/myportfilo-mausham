@@ -470,6 +470,8 @@ section {
   box-shadow: var(--shadow-md);
   transition: all var(--transition);
   position: relative;
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .project-card::before {
@@ -524,7 +526,7 @@ section {
 }
 
 .project-card:hover .project-image img {
-  transform: scale(1.1);
+  transform: translateZ(20px);
 }
 
 .project-info {
@@ -788,4 +790,26 @@ footer p {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* 3D Animation Styles */
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Enhanced hover effects */
+.skill-tags .tag {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(45deg, var(--primary) 0%, var(--accent) 100%);
+  transition: all 0.3s ease;
+}
+
+.skill-tags .tag:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
