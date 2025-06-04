@@ -1,7 +1,7 @@
 // Gemini API integration
 export async function sendChatMessage(message) {
   const myDescription = "A passionate web developer with an eye for clean UI, interaction design, and automation.";
-  const API_KEY = "AIzaSyAoKVPZpU7GLIJQKg1mE22f2r9ju6eqYsA";
+  const API_KEY = "AIzaSyBZTpM7kNdMaOK9_Z468BcQQ7yvc3rhPjQ";
   
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
